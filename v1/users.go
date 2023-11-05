@@ -56,21 +56,11 @@ func (v *v1) CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (v *v1) GetUserByApiKey(w http.ResponseWriter, r *http.Request) {
-	authHeader := r.Header.Get("Authorization")
-
-	headerComponents := strings.Split(authHeader, " ")
-
-	if len(headerComponents) != 2 || headerComponents[0] != "ApiKey" {
-		utils.RespondWithError(w, http.StatusUnauthorized, errors.New("invalid auth header"))
+	apiKey, err := utils.GetApiKey(r)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusUnauthorized, err)
 		return
 	}
-
-	if headerComponents[1] == "" {
-		utils.RespondWithError(w, http.StatusUnauthorized, errors.New("missing api key"))
-		return
-	}
-
-	apiKey := headerComponents[1]
 
 	user, err := v.Db.GetUserByApiKey(r.Context(), apiKey)
 	if err != nil {

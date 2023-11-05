@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"strings"
 )
 
 var InternalServerError = errors.New("internal server error")
@@ -32,4 +33,20 @@ func RespondWithJson(w http.ResponseWriter, status int, payload interface{}) {
 
 	w.WriteHeader(status)
 	w.Write(res)
+}
+
+func GetApiKey(r *http.Request) (string, error) {
+	authHeader := r.Header.Get("Authorization")
+
+	headerComponents := strings.Split(authHeader, " ")
+
+	if len(headerComponents) != 2 || headerComponents[0] != "ApiKey" {
+		return "", errors.New("invalid auth header")
+	}
+
+	if headerComponents[1] == "" {
+		return "", errors.New("missing api key")
+	}
+
+	return headerComponents[1], nil
 }
