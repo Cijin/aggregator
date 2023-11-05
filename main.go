@@ -14,13 +14,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-type apiConfig struct {
-	DB *database.Queries
-}
-
 func main() {
-	apiCfg := apiConfig{}
-
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -33,8 +27,9 @@ func main() {
 		log.Fatal("Failed to load db: ", err)
 	}
 
+	defer db.Close()
+
 	dbQueries := database.New(db)
-	apiCfg.DB = dbQueries
 
 	port := os.Getenv("PORT")
 
@@ -42,8 +37,12 @@ func main() {
 	r.Use(middleware.Cors())
 
 	v1Router := chi.NewRouter()
-	v1Router.Get("/readiness", v1.Readiness)
-	v1Router.Get("/err", v1.Err)
+	v1Handler := v1.NewHandler(dbQueries)
+
+	v1Router.Get("/readiness", v1Handler.Readiness)
+	v1Router.Get("/err", v1Handler.Err)
+
+	v1Router.Post("/users", v1Handler.CreateUser)
 
 	r.Mount("/v1", v1Router)
 

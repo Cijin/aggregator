@@ -2,9 +2,12 @@ package utils
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 )
+
+var InternalServerError = errors.New("internal server error")
 
 type errRes struct {
 	Error string `json:"error,omitempty"`

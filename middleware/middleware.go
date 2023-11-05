@@ -6,6 +6,11 @@ import (
 	"github.com/go-chi/cors"
 )
 
+// CtxKey is a key type for context; it prevents collisions.
+type CtxKey int
+
+const ConfigContextKey CtxKey = 0
+
 var corsOptions = cors.Options{
 	AllowedOrigins: []string{"https://*", "http://*"},
 	// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
