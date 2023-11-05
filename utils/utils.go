@@ -13,6 +13,10 @@ type errRes struct {
 	Error string `json:"error,omitempty"`
 }
 
+func RespondWithInternalServerError(w http.ResponseWriter) {
+	RespondWithError(w, http.StatusInternalServerError, InternalServerError)
+}
+
 func RespondWithError(w http.ResponseWriter, status int, err error) {
 	d := errRes{Error: err.Error()}
 

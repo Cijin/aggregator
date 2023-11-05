@@ -43,6 +43,7 @@ func main() {
 	v1Router.Get("/err", v1Handler.Err)
 
 	v1Router.Post("/users", v1Handler.CreateUser)
+	v1Router.Get("/users", v1Handler.GetUserByApiKey)
 
 	r.Mount("/v1", v1Router)
 
