@@ -3,16 +3,13 @@ package v1
 import (
 	"aggregator/internal/database"
 	"aggregator/utils"
-	"database/sql"
 	"encoding/json"
 	"errors"
 	"log"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/lib/pq"
 )
 
 func (v *v1) CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -47,29 +44,6 @@ func (v *v1) CreateUser(w http.ResponseWriter, r *http.Request) {
 	user, err := db.CreateUser(r.Context(), u)
 	if err != nil {
 		log.Print("Error creating user: ", err)
-
-		utils.RespondWithInternalServerError(w)
-		return
-	}
-
-	utils.RespondWithJson(w, http.StatusOK, user)
-}
-
-func (v *v1) GetUserByApiKey(w http.ResponseWriter, r *http.Request) {
-	apiKey, err := utils.GetApiKey(r)
-	if err != nil {
-		utils.RespondWithError(w, http.StatusUnauthorized, err)
-		return
-	}
-
-	user, err := v.Db.GetUserByApiKey(r.Context(), apiKey)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			utils.RespondWithError(w, http.StatusUnauthorized, errors.New("invalid api key"))
-			return
-		}
-
-		log.Print("Error getting user by api key: ", err)
 
 		utils.RespondWithInternalServerError(w)
 		return

@@ -39,11 +39,14 @@ func main() {
 	v1Router := chi.NewRouter()
 	v1Handler := v1.NewHandler(dbQueries)
 
+	// v1 routes
 	v1Router.Get("/readiness", v1Handler.Readiness)
 	v1Router.Get("/err", v1Handler.Err)
 
 	v1Router.Post("/users", v1Handler.CreateUser)
-	v1Router.Get("/users", v1Handler.GetUserByApiKey)
+
+	v1Router.Get("/feeds", v1Handler.GetFeeds)
+	v1Router.Post("/feeds", v1Handler.MiddlewareAuth(v1Handler.CreateFeed))
 
 	r.Mount("/v1", v1Router)
 
