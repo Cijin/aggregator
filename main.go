@@ -45,7 +45,7 @@ func main() {
 
 	v1Router.Post("/users", v1Handler.CreateUser)
 
-	v1Router.Get("/feeds", v1Handler.GetFeeds)
+	v1Router.Get("/feeds", v1Handler.ListFeed)
 	v1Router.Post("/feeds", v1Handler.MiddlewareAuth(v1Handler.CreateFeed))
 
 	r.Mount("/v1", v1Router)

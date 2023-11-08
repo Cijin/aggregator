@@ -42,3 +42,13 @@ func (v *v1) CreateFeed(w http.ResponseWriter, r *http.Request, u database.User)
 
 	utils.RespondWithJson(w, http.StatusOK, feed)
 }
+
+func (v *v1) ListFeed(w http.ResponseWriter, r *http.Request) {
+	feeds, err := v.Db.ListFeed(r.Context())
+	if err != nil {
+		utils.RespondWithInternalServerError(w)
+		return
+	}
+
+	utils.RespondWithJson(w, http.StatusOK, feeds)
+}
