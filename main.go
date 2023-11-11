@@ -48,6 +48,10 @@ func main() {
 	v1Router.Get("/feeds", v1Handler.ListFeed)
 	v1Router.Post("/feeds", v1Handler.MiddlewareAuth(v1Handler.CreateFeed))
 
+	v1Router.Get("/feed_follows", v1Handler.MiddlewareAuth(v1Handler.GetFeed))
+	v1Router.Post("/feed_follows", v1Handler.MiddlewareAuth(v1Handler.Follow))
+	v1Router.Delete("/feed_follows/{feedFollowId}", v1Handler.MiddlewareAuth(v1Handler.Unfollow))
+
 	r.Mount("/v1", v1Router)
 
 	server := &http.Server{

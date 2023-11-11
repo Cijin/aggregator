@@ -4,6 +4,7 @@ import (
 	"aggregator/internal/database"
 	"aggregator/utils"
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 
@@ -38,6 +39,18 @@ func (v *v1) CreateFeed(w http.ResponseWriter, r *http.Request, u database.User)
 	if err != nil {
 		utils.RespondWithInternalServerError(w)
 		return
+	}
+
+	// automatically create follow
+	_, err = v.Db.Follow(r.Context(), database.FollowParams{
+		ID:        uuid.New(),
+		FeedID:    feed.ID,
+		UserID:    u.ID,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	})
+	if err != nil {
+		log.Print("error creating follow:", err)
 	}
 
 	utils.RespondWithJson(w, http.StatusOK, feed)
