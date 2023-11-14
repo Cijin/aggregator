@@ -39,6 +39,9 @@ func main() {
 	v1Router := chi.NewRouter()
 	v1Handler := v1.NewHandler(dbQueries)
 
+	// start feed processing worker
+	go v1Handler.FeedWorker()
+
 	// v1 routes
 	v1Router.Get("/readiness", v1Handler.Readiness)
 	v1Router.Get("/err", v1Handler.Err)
