@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
-const createAuthor = `-- name: CreateAuthor :one
+const createPost = `-- name: CreatePost :one
 INSERT INTO posts (
   id, created_at, updated_at, title, url, description, published_at, feed_id
 ) VALUES (
@@ -22,7 +22,7 @@ INSERT INTO posts (
 RETURNING id, created_at, updated_at, title, url, description, published_at, feed_id
 `
 
-type CreateAuthorParams struct {
+type CreatePostParams struct {
 	ID          uuid.UUID
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
@@ -33,8 +33,8 @@ type CreateAuthorParams struct {
 	FeedID      uuid.UUID
 }
 
-func (q *Queries) CreateAuthor(ctx context.Context, arg CreateAuthorParams) (Post, error) {
-	row := q.db.QueryRowContext(ctx, createAuthor,
+func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, error) {
+	row := q.db.QueryRowContext(ctx, createPost,
 		arg.ID,
 		arg.CreatedAt,
 		arg.UpdatedAt,
