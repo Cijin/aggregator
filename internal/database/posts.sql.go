@@ -27,7 +27,7 @@ type CreatePostParams struct {
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 	Title       string
-	Url         sql.NullString
+	Url         string
 	Description sql.NullString
 	PublishedAt sql.NullTime
 	FeedID      uuid.UUID
@@ -58,16 +58,22 @@ func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, e
 	return i, err
 }
 
-const listPostsByUser = `-- name: ListPostsByUser :many
+const listsPosts = `-- name: ListsPosts :many
 SELECT p.id, p.created_at, p.updated_at, p.title, p.url, p.description, p.published_at, p.feed_id FROM posts p
 INNER JOIN feed_follows f 
 ON p.feed_id = f.feed_id
 AND f.user_id = $1
 ORDER BY p.published_at DESC
+LIMIT $2
 `
 
-func (q *Queries) ListPostsByUser(ctx context.Context, userID uuid.UUID) ([]Post, error) {
-	rows, err := q.db.QueryContext(ctx, listPostsByUser, userID)
+type ListsPostsParams struct {
+	UserID uuid.UUID
+	Limit  int32
+}
+
+func (q *Queries) ListsPosts(ctx context.Context, arg ListsPostsParams) ([]Post, error) {
+	rows, err := q.db.QueryContext(ctx, listsPosts, arg.UserID, arg.Limit)
 	if err != nil {
 		return nil, err
 	}

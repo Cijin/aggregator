@@ -6,9 +6,10 @@ INSERT INTO posts (
 )
 RETURNING *;
 
--- name: ListPostsByUser :many
+-- name: ListsPosts :many
 SELECT p.* FROM posts p
 INNER JOIN feed_follows f 
 ON p.feed_id = f.feed_id
 AND f.user_id = $1
-ORDER BY p.published_at DESC;
+ORDER BY p.published_at DESC
+LIMIT $2;
